@@ -15,7 +15,7 @@ export default () => {
     const physicsIds = [];
     
 
-    console.log( 'texture path: ' + baseUrl + "textures/silk/silk-contrast-noise.png" );
+    //console.log( 'texture path: ' + baseUrl + "textures/silk/silk-contrast-noise.png" );
     //console.log( 'SilkShader = ' + SilkShader.vertexShader )
 
     const createShaderMaterial = () => {
@@ -96,28 +96,53 @@ export default () => {
                     }
                 });
     
-                console.log( `Silk Fountain 01 modelLoaded() -> ${ params.fileName } num verts: ` + numVerts );
-    
-                gltf.scene.position.set( params.pos.x, params.pos.y, params.pos.z  );
+                console.log( `Silk Fountain Trees modelLoaded() -> ${ params.fileName } num verts: ` + numVerts );
+                console.log( 'POSITION PARAMS ', params.pos );
+                //gltf.scene.position.set( params.pos.x, params.pos.y, params.pos.z  );
 
                 resolve( gltf.scene );     
             });
         })
     }
 
-    loadModel( { 
+    let p1 = loadModel( { 
         filePath: baseUrl,
-        fileName: 'Silk_Fountain_Dream_1.glb',
+        fileName: 'SilkFountain_1_Dream.glb',
         pos: { x: 0, y: 0, z: 0 },
-    } ).then ( 
-        result => {
-            app.add( result );
+    } );
+
+    let p2 = loadModel( { 
+        filePath: baseUrl,
+        fileName: 'SilkFountain_2_Dream.glb',
+        pos: { x: 0, y: 0, z: 0 },
+    } );
+
+    let p3 = loadModel( { 
+        filePath: baseUrl,
+        fileName: 'SilkFountain_3_Dream.glb',
+        pos: { x: 0, y: 0, z: 0 },
+    } );
+
+    let p4 = loadModel( { 
+        filePath: baseUrl,
+        fileName: 'SilkFountain_4_Dream.glb',
+        pos: { x: 0, y: 0, z: 0 },
+    } );
+
+    Promise.all( 
+        [ p1, p2, p3, p4 ]
+    ).then( 
+        ( values ) => {
+            values.forEach( model => {
+                app.add( model )
+                model.position.y = -400;
+            })
         }
     )
 
     useFrame(( { timestamp } ) => {        
 
-        if( silkShaderMaterial ) silkShaderMaterial.uniforms.time.value += 0.02;
+        if( silkShaderMaterial ) silkShaderMaterial.uniforms.time.value += 0.06;
     
     });
 

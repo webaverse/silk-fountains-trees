@@ -2,34 +2,39 @@ import * as THREE from 'three';
 
 const SilkRawShader = {
   
-    vertexShader: `
+    vertexShader: `\
+
     ${THREE.ShaderChunk.common}
+    precision highp float;
     precision highp int;
+    varying vec2 vUv;
+
+
+      //uniform mat4 modelMatrix;
+      //uniform mat4 modelViewMatrix;
+      //uniform mat4 projectionMatrix;
+      //uniform mat4 viewMatrix;
+      //uniform mat3 normalMatrix;
+      //uniform vec3 cameraPosition;
+      uniform float time;
+
+      //attribute vec3 position;
+      //attribute vec3 normal;
+      //attribute vec2 uv;
+      attribute vec2 uv2;
+
+      varying vec2 tileCaustic_vUv;
+      varying vec2 noiseRipples_vUv;
     
-    //uniform mat4 modelMatrix;
-    //uniform mat4 modelViewMatrix;
-    //uniform mat4 projectionMatrix;
-    //uniform mat4 viewMatrix;
-    //uniform mat3 normalMatrix;
-    //uniform vec3 cameraPosition;
-    uniform float time;
-    
-    //attribute vec3 position;
-    //attribute vec3 normal;
-    //attribute vec2 uv;
-    attribute vec2 uv2;
-    
-    varying vec2 tileCaustic_vUv;
-    varying vec2 noiseRipples_vUv;
-    
-    varying vec3 transGlow_normal;
-    varying vec3 transGlow_position;
-    varying vec3 glowEffect_normal;
-    varying vec3 glowEffect_position;
-    
-    //varying vec3 vNormal;
-    
-    ${THREE.ShaderChunk.logdepthbuf_pars_vertex}
+      varying vec3 transGlow_normal;
+      varying vec3 transGlow_position;
+      varying vec3 glowEffect_normal;
+      varying vec3 glowEffect_position;
+
+      //varying vec3 vNormal;
+	  
+	${THREE.ShaderChunk.logdepthbuf_pars_vertex}  
+
       vec4 tileCausticCol() {
         
         vec4 tileCausticPos = vec4(0.0);
@@ -45,7 +50,6 @@ const SilkRawShader = {
         noiseRipples_vUv = uv;
         noiseRipplePos = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
         return noiseRipplePos *= 1.0;
-        
       }
 
       vec4 transGlowCol() {
@@ -69,16 +73,28 @@ const SilkRawShader = {
 
       void main() {
 
+      //vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+      //gl_Position = projectionMatrix * mvPosition;
+	  
         //vNormal = normal;
-        gl_Position = tileCausticCol() + noiseRippleCol() + transGlowCol() + glowEffectCol(); 
+        //gl_Position = tileCausticCol() + noiseRippleCol() + transGlowCol() + glowEffectCol();
+		
+		    //gl_Position = tileCausticCol() + noiseRippleCol() + transGlowCol() + glowEffectCol();
+
+        noiseRippleCol();
+        transGlowCol();
+        glowEffectCol();
+
+        gl_Position = tileCausticCol();
+		
         ${THREE.ShaderChunk.logdepthbuf_vertex}
       }
 
     `,
 
-    fragmentShader: `
-    ${THREE.ShaderChunk.logdepthbuf_pars_fragment}
-      #define TAU 6.28318530718
+    fragmentShader: `\
+    
+    #define TAU 6.28318530718
       #define MAX_ITER 5
      
       precision highp float;
@@ -115,7 +131,7 @@ const SilkRawShader = {
       varying vec2 tileCaustic_vUv;
       
       varying vec2 noiseRipples_vUv;
-      
+	        
       mat2 makem2(in float theta) {
         float c = cos(theta);
         float s = sin(theta);
@@ -152,6 +168,8 @@ const SilkRawShader = {
       varying vec3 transGlow_normal;
       varying vec3 glowEffect_position;
       varying vec3 glowEffect_normal;
+	  
+	  ${THREE.ShaderChunk.logdepthbuf_pars_fragment}
 
       //varying vec3 vNormal;
 
@@ -217,7 +235,11 @@ const SilkRawShader = {
         gl_FragColor = (tileCausticCol() + noiseRippleCol() + transGlowCol() + glowEffectCol()); 
 				
         //gl_FragColor = vec4( gl_FragColor.r * d, gl_FragColor.g * d, gl_FragColor.b * d, 1.0 );
+		
+		//gl_FragColor = vec4(1,0,0,1);
+		
         ${THREE.ShaderChunk.logdepthbuf_fragment}
+		
       }
 
     `,
