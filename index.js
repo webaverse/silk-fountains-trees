@@ -53,7 +53,7 @@ export default () => {
             //const loader = new GLTFLoader();
             const { gltfLoader } = useLoaders();
             const { dracoLoader } = useLoaders();
-            //dracoLoader.setDecoderPath( baseUrl + "draco-decoder/" );
+
             gltfLoader.setDRACOLoader( dracoLoader );
     
             gltfLoader.load( params.filePath + params.fileName, function( gltf ) {
@@ -71,34 +71,16 @@ export default () => {
     
                         if( child.name == 'Silk-low' ){
                             child.material = silkShaderMaterial;
-                            // console.log( 'material is ' + child.name, silkShaderMaterial.uniforms );
-                            // child.material = silkShaderMaterial;
-                            // child.material.side = THREE.DoubleSide;
-
-                            //child.castShadow = true;
-                            //child.receiveShadow = true;
     
                         } else {
-                            /* console.log( 'material is ' + child.name, silkShaderMaterial.uniforms );
-                            child.material = silkShaderMaterial;
-                            child.material.side = THREE.DoubleSide; */
-
-                            //child.material.side = THREE.DoubleSide;
                             child.castShadow = true;
                             child.receiveShadow = true;
-                            //child.material.roughness = 1;
-                            //child.material.metalness = 0.0;
-                            // add light scatter chunk
                         }
-
-                        /* child.material = silkShaderMaterial;
-                        child.material.side = THREE.BackSide; */
                     }
                 });
     
                 console.log( `Silk Fountain Trees modelLoaded() -> ${ params.fileName } num verts: ` + numVerts );
-                console.log( 'POSITION PARAMS ', params.pos );
-                //gltf.scene.position.set( params.pos.x, params.pos.y, params.pos.z  );
+               
 
                 resolve( gltf.scene );     
             });
@@ -125,7 +107,7 @@ export default () => {
 
     let p4 = loadModel( { 
         filePath: baseUrl,
-        fileName: 'SilkFountain_4_Dream.glb',
+        fileName: 'SilkFountain_5_Dream.glb',
         pos: { x: 0, y: 0, z: 0 },
     } );
 
