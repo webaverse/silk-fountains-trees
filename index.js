@@ -15,9 +15,6 @@ export default () => {
     const physicsIds = [];
     
 
-    //console.log( 'texture path: ' + baseUrl + "textures/silk/silk-contrast-noise.png" );
-    //console.log( 'SilkShader = ' + SilkShader.vertexShader )
-
     const createShaderMaterial = () => {
 
         let testSilkTexture = new THREE.TextureLoader().load( baseUrl + "textures/silk/silk-contrast-noise.png" );
@@ -33,18 +30,11 @@ export default () => {
         })
 
         return silkShaderMat;
-
-        /* let debugMat = new THREE.ShaderMaterial( {
-            vertexShader: DebugShader.vertexShader,
-            fragmentShader: DebugShader.fragmentShader,
-            side: THREE.DoubleSide
-        });
-
-        return debugMat; */
-
     }
 
     const silkShaderMaterial = createShaderMaterial();
+
+    const pointLight = new THREE.PointLight( 0x00deff, 50, 100 );
 
     const loadModel = ( params ) => {
 
@@ -76,10 +66,12 @@ export default () => {
                             child.castShadow = true;
                             child.receiveShadow = true;
                         }
+
+                        
                     }
                 });
     
-                console.log( `Silk Fountain Trees modelLoaded() -> ${ params.fileName } num verts: ` + numVerts );
+                //console.log( `Silk Fountain Trees modelLoaded() -> ${ params.fileName } num verts: ` + numVerts );
                
 
                 resolve( gltf.scene );     
@@ -116,11 +108,32 @@ export default () => {
     ).then( 
         ( values ) => {
             values.forEach( model => {
-                app.add( model )
-                model.position.y = -400;
+                app.add( model ) 
+
+                
+                //model.position.y = -400;
             })
+
+            addLights();
         }
     )
+
+    const addLights = () => {
+
+        let positions = [
+            { x: -26, y: 36, z: -43 },
+            { x: 5, y: 28, z: -6 },
+            { x: -25, y: 21, z: 19 },
+            { x: -54, y: 31, z: -19 },
+        ];
+
+        for( let i = 0; i < positions.length; i++ ){
+            let pLight = pointLight.clone();
+            app.add( pLight );
+            pLight.position.set( positions[ i ].x, positions[ i ].y, positions[ i ].z );
+            pLight.updateMatrixWorld();
+        }
+    }
 
     useFrame(( { timestamp } ) => {        
 
